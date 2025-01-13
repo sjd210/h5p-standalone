@@ -199,15 +199,16 @@ export class H5PStandalone {
 
         const {h5pJsonPath, contentJsonPath, librariesPath} = this.getH5PPaths(options);
 
-        const H5PJsonContent = <H5PPackageDefinition>(await getJSON(`${h5pJsonPath}/h5p.json`, options?.assetsRequestFetchOptions));
+        const jsonContent = await getJSON(h5pJsonPath, options?.assetsRequestFetchOptions);
+        const H5PJsonContent = <H5PPackageDefinition>(jsonContent["h5p"])
+        //const H5PJsonContent = <H5PPackageDefinition>(await getJSON(`${h5pJsonPath}/h5p.json`, options?.assetsRequestFetchOptions));
 
         //populate the variable before executing other functions.We assume other dependent
         // libraries follow the same format rather than performing the check for each library
         this.libraryFolderContainsVersion = await this.libraryFolderNameIncludesVersion(
             librariesPath, H5PJsonContent.preloadedDependencies[0], options?.assetsRequestFetchOptions);
 
-
-        const H5PContentJsonContent = await getJSON(`${contentJsonPath}/content.json`, options?.assetsRequestFetchOptions);
+        const H5PContentJsonContent = jsonContent["content"];
 
         const mainLibrary = await this.findMainLibrary(H5PJsonContent, librariesPath, options?.assetsRequestFetchOptions);
 
